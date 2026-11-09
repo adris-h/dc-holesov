@@ -26,7 +26,7 @@ const pill = 'rounded-lg border px-[18px] py-2.5 text-[15px] transition-colors'
 
     <AppSection>
       <div class="flex flex-wrap items-start gap-10">
-        <div class="flex min-w-0 flex-[1_1_620px] flex-col gap-5">
+        <div class="flex min-w-0 flex-[1_1_640px] h-full flex-col gap-5">
           <div class="flex flex-wrap gap-2">
             <button
               :class="[pill, active === null ? 'border-ink bg-ink text-white' : 'border-line bg-surface hover:border-ink']"
@@ -58,7 +58,7 @@ const pill = 'rounded-lg border px-[18px] py-2.5 text-[15px] transition-colors'
         <!-- tmavá karta: nejbližší turnaj -->
         <aside
           v-if="next"
-          class="relative flex min-w-0 flex-[0_1_380px] flex-col gap-6 overflow-hidden rounded-2xl bg-night p-7 text-white"
+          class="relative flex min-w-0 flex-[0_1_380px]  flex-col gap-6 overflow-hidden rounded-2xl bg-night p-7 text-white"
         >
           <div class="absolute -right-[120px] -top-[120px] size-80 rounded-full border border-white/10" />
           <div class="absolute -right-[70px] -top-[70px] size-[220px] rounded-full border border-white/10" />

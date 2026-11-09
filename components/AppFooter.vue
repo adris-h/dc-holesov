@@ -1,3 +1,5 @@
+<script setup lang="ts">
+</script>
 <template>
   <footer class="bg-night-card text-white">
     <div class="mx-auto grid w-full max-w-[1440px] gap-8 px-5 py-14 md:grid-cols-[1.8fr_1fr_1fr] md:px-20">
@@ -9,7 +11,10 @@
         <li><NuxtLink to="/o-klubu" class="hover:text-white/70">O klubu</NuxtLink></li>
         <li><NuxtLink to="/kontakt" class="hover:text-white/70">Kontakt</NuxtLink></li>
       </ul>
-      <p class="text-base font-light tracking-[0.02em]">info@dcholesov.cz</p>
+      <ul>
+        <li><p class="text-base font-light tracking-[0.02em]">info@dcholesov.cz</p></li>
+        <li><p class="text-base font-light tracking-[0.02em]">+420 000 000 000</p></li>
+      </ul>
     </div>
     <div class="border-t border-white/15">
       <div class="mx-auto w-full max-w-[1440px] px-5 py-5 text-[12.5px] font-medium tracking-[0.02em] md:px-20">

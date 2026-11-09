@@ -5,7 +5,7 @@ lead: Historie, vedení a místo, kde hrajeme.
 
 ## Historie
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Klub vznikl v Holešově a od začátku pořádá otevřené turnaje i ligové zápasy. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.  
 
 ## Vedení klubu
 
