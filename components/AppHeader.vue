@@ -38,6 +38,7 @@ const tabIdle = 'border-transparent hover:text-accent'
           Přihlásit se
         </NuxtLink>
       </nav>
+      
 
       <button
         class="flex size-10 flex-col items-center justify-center gap-[5px] rounded-lg md:hidden"

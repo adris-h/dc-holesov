@@ -33,12 +33,15 @@ const facts = [
 
 const box = 'rounded-[10px] border border-line bg-surface px-[22px] py-5'
 const link = 'text-[13px] text-accent-dark hover:underline'
+
 </script>
 
 <template>
   <div>
     <TournamentHero v-if="next" v-bind="next" :slug="slugFromStem(next.stem as string)" />
     <div v-else class="pt-16" />
+
+
 
     <!-- BENTO -->
     <section class="mx-auto flex w-full max-w-[1440px] flex-col gap-3 px-5 md:px-20">
