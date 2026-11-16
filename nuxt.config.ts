@@ -3,6 +3,10 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   modules: ['@nuxt/content', '@nuxtjs/tailwindcss', '@nuxt/eslint'],
+  // Stránky účtu nejsou prolinkované pro nepřihlášené, crawler je nenajde – vygenerovat je explicitně
+  nitro: {
+    prerender: { routes: ['/admin', '/ucet', '/registrace', '/prihlasit'] },
+  },
   runtimeConfig: {
     public: {
       firebase: {

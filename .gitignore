@@ -1,0 +1,29 @@
+# Nuxt build / cache
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Node
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env – Firebase klíče apod. (na GitHub patří do Settings → Secrets)
+.env
+.env.*
+!.env.example
+
+# Firebase CLI
+.firebase/
+firebase-debug.log
+firestore-debug.log

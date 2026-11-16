@@ -8,6 +8,15 @@ const links = [
   { to: '/kontakt', label: 'Kontakt' },
 ]
 const open = ref(false)
+// Tlačítko účtu: pořadatel → Administrace, přihlášený hráč → Můj účet, jinak Přihlásit se
+const { user, isAdmin } = useAuth()
+const account = computed(() =>
+  isAdmin.value
+    ? { to: '/admin', label: 'Administrace' }
+    : user.value
+      ? { to: '/ucet', label: 'Můj účet' }
+      : { to: '/prihlasit', label: 'Přihlásit se' },
+)
 const route = useRoute()
 watch(() => route.fullPath, () => (open.value = false))
 const isActive = (to: string) => (to === '/' ? route.path === '/' : route.path.startsWith(to))
@@ -33,10 +42,10 @@ const tabIdle = 'border-transparent hover:text-accent'
           {{ l.label }}
         </NuxtLink>
         <NuxtLink
-          to="/prihlasit"
+          :to="account.to"
           class="ml-4 rounded-lg bg-accent px-4 py-2 text-sm font-medium tracking-[0.02em] text-white transition-colors hover:bg-accent-dark"
         >
-          Přihlásit se
+          {{ account.label }}
         </NuxtLink>
       </nav>
       
@@ -66,8 +75,8 @@ const tabIdle = 'border-transparent hover:text-accent'
       >
         {{ l.label }}
       </NuxtLink>
-      <NuxtLink to="/prihlasit" class="mt-2 rounded-lg bg-accent px-4 py-3 text-center text-[15px] font-medium text-white">
-        Přihlásit se
+      <NuxtLink :to="account.to" class="mt-2 rounded-lg bg-accent px-4 py-3 text-center text-[15px] font-medium text-white">
+        {{ account.label }}
       </NuxtLink>
     </nav>
   </Header>

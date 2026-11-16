@@ -50,6 +50,44 @@ Hodnoty `status`: `open`, `league`, `soon`, `closed`.
 
 ## Stránky
 
-`/`, `/vysledky`, `/liga`, `/o-klubu`, `/kalendar`, `/kalendar/:slug`, `/kontakt`, `/prihlasit`
+`/`, `/vysledky`, `/liga`, `/o-klubu`, `/kalendar`, `/kalendar/:slug`, `/kontakt`, `/prihlasit`, `/registrace`, `/ucet`, `/admin`
 
-Kontakt a přihlášky jsou zatím statické. Liga čte `content/league`, výsledky a „Poslední výsledek“ na úvodu čtou pole `standings` z turnajů.
+Kontakt je zatím statický. Přihlášky na turnaje běží přes Firebase (viz níže). Liga čte `content/league`, výsledky a „Poslední výsledek“ na úvodu čtou pole `standings` z turnajů.
+
+## Firebase – účty a přihlášky na turnaje
+
+Web je statický (GitHub Pages), Firebase se volá jen z prohlížeče (`plugins/firebase.client.ts`). Konfigurace je v `.env` (`NUXT_PUBLIC_FIREBASE_*`).
+
+**Jak to funguje**
+
+1. **Účet si může založit kdokoli** na `/registrace` (jméno, e-mail, heslo, volitelně přezdívka a klub). Na `/ucet` upraví profil a vidí své přihlášky.
+2. Hráč vyplní formulář na `/kalendar/<slug>` → vznikne přihláška se stavem `pending`. Přihlášenému se formulář předvyplní z profilu a přihláška se naváže na jeho účet (`uid`). Přihlásit se na turnaj jde i bez účtu.
+3. **Pořadatel (admin)** se přihlásí stejně jako ostatní; admin práva má jen ten, komu je ručně přidělíte ve Firebase (viz níže). Na `/admin` přihlášky přijme / odmítne / smaže.
+4. Přijaté přihlášky se hned (živě) zobrazí v seznamu na stránce turnaje a v počtech v kalendáři. Kapacita se bere z `capacity` ve frontmatteru turnaje. Hráč může svou čekající přihlášku na `/ucet` stáhnout.
+
+**Data ve Firestore**
+
+| Kolekce | Obsah | Kdo čte |
+|---|---|---|
+| `users/{uid}` | profil: `name`, `nickname`, `club`, `createdAt`, `updatedAt` | jen vlastník (a admin) |
+| `registrations/{id}` | `tournament` (slug), `name`, `nickname`, `club`, `status` (`pending`/`accepted`/`rejected`), `uid` (pokud z účtu), `createdAt`, `decidedAt` | veřejně jen `accepted`, vlastník své, admin vše |
+| `registrationContacts/{id}` | `contact` (e-mail/telefon), `tournament` – stejné id jako přihláška | jen admin |
+| `admins/{uid}` | prázdný dokument = uživatel je pořadatel (zakládá se jen ručně v konzoli) | jen daný uživatel |
+
+Pravidla jsou v `firestore.rules`. Kód: `composables/useAuth.ts`, `composables/useProfile.ts`, `composables/useRegistrations.ts`.
+
+**Jednorázové nastavení**
+
+1. Firebase konzole → **Authentication** → Sign-in method → zapnout **Email/Password**.
+2. Pořadatel si založí účet na webu (`/registrace`) – nebo ho přidáte v Authentication → Users → **Add user**. V Authentication → Users zkopírujte jeho **User UID**.
+3. **Firestore Database** → vytvořit databázi (pokud není) → kolekce `admins` → dokument s ID = zkopírované UID (stačí bez polí, nebo např. `name: "Dalibor"`). Po obnovení stránky uvidí v hlavičce „Administrace“.
+4. Firestore → **Rules** → vložit obsah `firestore.rules` → Publish.
+   (Nebo přes CLI: `npm i -g firebase-tools`, `firebase login`, `firebase use --add`, `firebase deploy --only firestore:rules`.)
+5. Authentication → Settings → **Authorized domains** → přidat doménu webu (např. `<uživatel>.github.io`).
+
+6. GitHub repozitář → Settings → Secrets and variables → **Actions** → přidat 6 secrets se stejnými názvy a hodnotami jako v `.env` (`NUXT_PUBLIC_FIREBASE_API_KEY`, …). Workflow `deploy.yml` je předá do `nuxt generate`.
+
+Další pořadatel = kroky 2–3. Odebrání práv = smazat jeho dokument v `admins`.
+
+Volitelně: Authentication → Templates → upravit texty e-mailů (ověření účtu, reset hesla) – posílají se česky.
+

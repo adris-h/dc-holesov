@@ -37,3 +37,16 @@ export function matchText(haystack: string | (string | undefined)[], query: stri
 
 /** Styl polí ve filtrech tabulek (TableFilter) */
 export const FILTER_INPUT = 'rounded-lg border border-line-strong bg-white px-4 py-2.5 font-sans text-[15px] text-ink outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10'
+
+/** Date -> 16. 11. 2026 15:42 */
+export function formatDateTime(d?: Date | null) {
+  if (!d) return '–'
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getDate()}. ${d.getMonth() + 1}. ${d.getFullYear()} ${d.getHours()}:${pad(d.getMinutes())}`
+}
+
+/** Odkaz pro kontakt: e-mail -> mailto:, jinak tel: */
+export function contactHref(contact: string) {
+  const c = contact.trim()
+  return c.includes('@') ? `mailto:${c}` : `tel:${c.replace(/[^\d+]/g, '')}`
+}

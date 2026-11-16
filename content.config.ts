@@ -29,8 +29,7 @@ export default defineContentConfig({
         place: z.string(),
         placeSub: z.string().optional(),
         fee: z.number().optional(), // Kč, vynech u ligových zápasů
-        capacity: z.number().optional(),
-        registered: z.number().optional(),
+        capacity: z.number().optional(), // počet přihlášených se bere z Firestore (schválené přihlášky)
         deadline: z.string().optional(), // ISO
         checkin: z.string().optional(), // např. 12:15 – 12:45
         status: z.enum(['open', 'league', 'soon', 'closed']),

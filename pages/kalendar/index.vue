@@ -13,6 +13,10 @@ const shown = computed(() =>
 )
 
 const next = computed(() => (tournaments.value ?? []).find((t) => t.status === 'open'))
+const nextSlug = computed(() => (next.value ? slugFromStem(next.value.stem as string) : ''))
+
+// Počty schválených přihlášek z Firestore (živě)
+const { counts } = useAcceptedCounts()
 const pill = 'rounded-lg border px-[18px] py-2.5 text-[15px] transition-colors'
 </script>
 
@@ -50,6 +54,7 @@ const pill = 'rounded-lg border px-[18px] py-2.5 text-[15px] transition-colors'
               :key="t.stem"
               v-bind="t"
               :slug="slugFromStem(t.stem as string)"
+              :registered="counts[slugFromStem(t.stem as string)] ?? 0"
               :highlight="next?.stem === t.stem"
             />
           </div>
@@ -77,13 +82,13 @@ const pill = 'rounded-lg border px-[18px] py-2.5 text-[15px] transition-colors'
               <dt class="text-white/70">Postupuje</dt><dd>{{ next.advances }} lidí</dd>
             </div>
             <div v-if="next.capacity" class="flex justify-between border-t border-white/15 py-3">
-              <dt class="text-white/70">Přihlášeno</dt><dd>{{ next.registered ?? 0 }} z {{ next.capacity }}</dd>
+              <dt class="text-white/70">Přihlášeno</dt><dd>{{ counts[nextSlug] ?? 0 }} z {{ next.capacity }}</dd>
             </div>
           </dl>
           <div v-if="next.capacity" class="relative h-1 rounded-sm bg-white/15">
             <div
               class="h-full rounded-sm bg-accent-bright"
-              :style="{ width: `${Math.min(100, ((next.registered ?? 0) / next.capacity) * 100)}%` }"
+              :style="{ width: `${Math.min(100, ((counts[nextSlug] ?? 0) / next.capacity) * 100)}%` }"
             />
           </div>
           <AppButton :to="`/kalendar/${slugFromStem(next.stem as string)}#prihlaska`" variant="primary" size="lg" class="relative">

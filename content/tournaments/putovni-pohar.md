@@ -6,7 +6,6 @@ place: Bowling Club
 placeSub: Holešov
 fee: 200
 capacity: 32
-registered: 18
 deadline: "2026-12-01"
 checkin: "12:15 – 12:45"
 status: open
