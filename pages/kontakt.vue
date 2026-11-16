@@ -17,8 +17,9 @@
           <div class="py-6">
             <h3 class="text-lg font-medium tracking-tight">Pořadatel turnajů</h3>
             <p class="mt-1 text-ink-3">Dalibor Sedlář</p>
+            <!--
             <p class="text-ink-3">info@dcholesov.cz</p>
-            <p class="text-ink-3">+420 000 000 000</p>
+            <p class="text-ink-3">+420 000 000 000</p>-->
           </div>
           <div class="py-6">
             <h3 class="text-lg font-medium tracking-tight">Předseda klubu</h3>

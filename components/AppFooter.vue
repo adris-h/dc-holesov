@@ -15,8 +15,9 @@
         <li><NuxtLink to="/kontakt" class="hover:text-white/70">Kontakt</NuxtLink></li>
       </ul>
       <ul class="flex flex-col gap-1 text-base font-light tracking-[0.02em]">
+        <!--
         <li><p>info@dcholesov.cz</p></li>
-        <li><p>+420 000 000 000</p></li>
+        <li><p>+420 000 000 000</p></li>-->
         <li><a href="https://www.facebook.com/share/g/18xzrAyi8U/" target="_blank" rel="noopener" class="hover:text-white/70">Facebook skupina</a></li>
         <li><a href="https://liga.czechdarts.org/tabulka/3f36532d-ed9b-41d0-866b-7edeffd53275/" target="_blank" rel="noopener" class="hover:text-white/70">Ligová tabulka ČŠO</a></li>
       </ul>
