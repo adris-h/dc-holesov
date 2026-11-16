@@ -94,8 +94,14 @@ function useLiveQuery<T>(
   }
   function start() {
     stop()
+    const db = nuxtApp.$db as Firestore | null
+    if (!db) {
+      error.value = firebaseErrorMessage(firebaseUnavailable())
+      loading.value = false
+      return
+    }
     loading.value = true
-    unsub = onSnapshot(build(nuxtApp.$db as Firestore), (snap) => {
+    unsub = onSnapshot(build(db), (snap) => {
       data.value = map(snap.docs)
       loading.value = false
       error.value = null
@@ -164,7 +170,11 @@ export function useMyRegistrations() {
 export function useRegistrationActions() {
   const nuxtApp = useNuxtApp()
   const { user } = useAuth()
-  const db = () => nuxtApp.$db as Firestore
+  const db = () => {
+    const d = nuxtApp.$db as Firestore | null
+    if (!d) throw firebaseUnavailable()
+    return d
+  }
 
   /** Odeslání přihlášky – vznikne se status 'pending', čeká na schválení adminem. */
   async function submit(tournament: string, form: RegistrationForm) {

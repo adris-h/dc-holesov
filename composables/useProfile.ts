@@ -26,8 +26,13 @@ export function useProfile() {
         loading.value = false
         return
       }
+      const db = nuxtApp.$db as Firestore | null
+      if (!db) {
+        loading.value = false
+        return
+      }
       loading.value = true
-      unsub = onSnapshot(doc(nuxtApp.$db as Firestore, 'users', uid), (snap) => {
+      unsub = onSnapshot(doc(db, 'users', uid), (snap) => {
         const d = snap.data()
         profile.value = d
           ? { name: d.name ?? '', nickname: d.nickname || undefined, club: d.club || undefined }
@@ -44,7 +49,9 @@ export function useProfile() {
   async function saveProfile(p: Profile) {
     const uid = user.value?.uid
     if (!uid) throw new Error('Nepřihlášen')
-    const ref = doc(nuxtApp.$db as Firestore, 'users', uid)
+    const db = nuxtApp.$db as Firestore | null
+    if (!db) throw firebaseUnavailable()
+    const ref = doc(db, 'users', uid)
     const name = p.name.trim()
     const nickname = p.nickname?.trim() ?? ''
     const club = p.club?.trim() ?? ''

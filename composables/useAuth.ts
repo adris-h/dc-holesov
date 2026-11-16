@@ -7,6 +7,12 @@ import {
   updateProfile,
 } from 'firebase/auth'
 import { doc, serverTimestamp, setDoc, type Firestore } from 'firebase/firestore'
+import type { Auth } from 'firebase/auth'
+
+/** Chyba, když Firebase není k dispozici (chybí konfigurace) – firebaseErrorMessage ji přeloží. */
+export function firebaseUnavailable() {
+  return Object.assign(new Error('Firebase není nakonfigurovaný'), { code: 'app/unavailable' })
+}
 
 export type AuthUser = { uid: string; email: string | null; name: string | null; emailVerified: boolean }
 
@@ -30,6 +36,13 @@ export function useAuth() {
   const isAdmin = useState<boolean>('auth-admin', () => false)
   const ready = useState<boolean>('auth-ready', () => false)
   const checkedUid = useState<string | null>('auth-checked-uid', () => null)
+  const available = useState<boolean>('firebase-available', () => false)
+
+  function auth(): Auth {
+    const a = nuxtApp.$auth as Auth | null
+    if (!a) throw firebaseUnavailable()
+    return a
+  }
 
   /** Počká, než plugin pro daného uživatele dočte admin práva. */
   function waitForCheck(uid: string) {
@@ -46,7 +59,7 @@ export function useAuth() {
 
   /** Přihlásí a počká, než se ověří admin práva. Vrací, zda je uživatel admin. */
   async function login(email: string, password: string) {
-    const cred = await signInWithEmailAndPassword(nuxtApp.$auth, email.trim(), password)
+    const cred = await signInWithEmailAndPassword(auth(), email.trim(), password)
     await waitForCheck(cred.user.uid)
     return isAdmin.value
   }
@@ -54,7 +67,7 @@ export function useAuth() {
   /** Založí účet + profil users/{uid} a pošle ověřovací e-mail. */
   async function register(data: SignUpData) {
     const name = data.name.trim()
-    const cred = await createUserWithEmailAndPassword(nuxtApp.$auth, data.email.trim(), data.password)
+    const cred = await createUserWithEmailAndPassword(auth(), data.email.trim(), data.password)
     await updateProfile(cred.user, { displayName: name })
     const profile: Record<string, unknown> = { name, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }
     if (data.nickname?.trim()) profile.nickname = data.nickname.trim()
@@ -67,14 +80,14 @@ export function useAuth() {
   }
 
   async function resetPassword(email: string) {
-    await sendPasswordResetEmail(nuxtApp.$auth, email.trim())
+    await sendPasswordResetEmail(auth(), email.trim())
   }
 
   async function logout() {
-    await signOut(nuxtApp.$auth)
+    await signOut(auth())
   }
 
-  return { user, isAdmin, ready, login, register, resetPassword, logout }
+  return { user, isAdmin, ready, available, login, register, resetPassword, logout }
 }
 
 /** Srozumitelná česká hláška k chybě z Firebase */
@@ -94,6 +107,7 @@ export function firebaseErrorMessage(e: unknown): string {
     'auth/operation-not-allowed': 'Registrace e-mailem není ve Firebase povolená.',
     'permission-denied': 'Nemáte oprávnění k této akci.',
     'unavailable': 'Služba je dočasně nedostupná. Zkuste to znovu.',
+    'app/unavailable': 'Účty a přihlášky jsou momentálně nedostupné. Zkuste to prosím později.',
   }
   return map[code] ?? 'Něco se pokazilo. Zkuste to prosím znovu.'
 }
