@@ -73,6 +73,9 @@ const pill = 'rounded-lg border px-[18px] py-2.5 text-[15px] transition-colors'
             <div class="flex justify-between border-t border-white/15 py-3">
               <dt class="text-white/70">Kde</dt><dd>{{ next.place }} {{ next.placeSub }}</dd>
             </div>
+            <div v-if="next.advances" class="flex justify-between border-t border-white/15 py-3">
+              <dt class="text-white/70">Postupuje</dt><dd>{{ next.advances }} lidí</dd>
+            </div>
             <div v-if="next.capacity" class="flex justify-between border-t border-white/15 py-3">
               <dt class="text-white/70">Přihlášeno</dt><dd>{{ next.registered ?? 0 }} z {{ next.capacity }}</dd>
             </div>

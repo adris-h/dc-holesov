@@ -2,6 +2,7 @@
 const links = [
   { to: '/', label: 'Domů' },
   { to: '/vysledky', label: 'Aktuální Výsledky' },
+  { to: '/liga', label: 'Liga' },
   { to: '/o-klubu', label: 'O klubu' },
   { to: '/kalendar', label: 'Kalendář' },
   { to: '/kontakt', label: 'Kontakt' },

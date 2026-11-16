@@ -23,3 +23,17 @@ export function formatShortDate(iso?: string) {
 export function slugFromStem(stem: string) {
   return stem.split('/').pop() as string
 }
+
+/** Hledání bez ohledu na diakritiku a velikost písmen: matchText('Čáp Jiří', 'cap') -> true */
+export function normalizeText(s: string) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
+}
+export function matchText(haystack: string | (string | undefined)[], query: string) {
+  const q = normalizeText(query)
+  if (!q) return true
+  const text = Array.isArray(haystack) ? haystack.filter(Boolean).join(' ') : haystack
+  return normalizeText(text).includes(q)
+}
+
+/** Styl polí ve filtrech tabulek (TableFilter) */
+export const FILTER_INPUT = 'rounded-lg border border-line-strong bg-white px-4 py-2.5 font-sans text-[15px] text-ink outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10'

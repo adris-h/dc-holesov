@@ -6,25 +6,48 @@ const { data: upcoming } = await useAsyncData('upcoming', async () => {
   return all.filter((t) => t.date >= today)
 })
 const next = computed(() => upcoming.value?.find((t) => t.status === 'open') ?? null)
-const nextLeague = computed(() => upcoming.value?.find((t) => t.status === 'league') ?? null)
-// "2. liga: Holešov A – Zlín B" -> ["Holešov A", "Zlín B"]
-const teams = computed(() => (nextLeague.value?.title.split(': ').pop() ?? '').split(' – '))
 
 const { data: news } = await useAsyncData('latest-news', () =>
   queryCollection('news').order('date', 'DESC').limit(3).all(),
 )
 
-// prototyp: tabulka a výsledky jsou zatím statické
-const league = [
-  { team: 'DC Holešov A', played: 6, pts: 15 },
-  { team: 'DC Zlín B', played: 6, pts: 13 },
-  { team: 'DC Kroměříž', played: 6, pts: 10 },
-]
-const podium = [
-  { pos: 1, name: 'Petr Novák', club: 'DC Holešov', pts: 42 },
-  { pos: 2, name: 'Jan Svoboda', club: 'DC Zlín', pts: 38 },
-  { pos: 3, name: 'Martin Dvořák', club: 'DC Kroměříž', pts: 35 },
-]
+// ---- 2. liga (content/league/*.md) ----
+const { data: league } = await useAsyncData('league', () =>
+  queryCollection('league').order('season', 'DESC').first(),
+)
+// Náhled tabulky: první tři + náš tým, pokud mezi nimi není
+const leaguePreview = computed(() => {
+  const table = league.value?.table ?? []
+  const top = table.slice(0, 3)
+  const ours = table.find((r) => r.team === league.value?.us)
+  return ours && !top.includes(ours) ? [...top, ours] : top
+})
+// Další neodehraný zápas
+const nextMatch = computed(() => league.value?.matches.find((m) => !m.score && m.date >= today) ?? null)
+const teams = computed(() => {
+  const m = nextMatch.value
+  if (!m || !league.value) return []
+  return m.home ? [league.value.us, m.opponent] : [m.opponent, league.value.us]
+})
+
+// ---- Poslední výsledek: vítěz posledního odehraného turnaje (pole standings u turnajů) ----
+const { data: lastResult } = await useAsyncData('last-result', async () => {
+  const all = await queryCollection('tournaments').all()
+  const withStandings = all.filter((t) => t.standings).sort((a, b) => b.standings!.year - a.standings!.year)
+  const t = withStandings[0]
+  const s = t?.standings
+  if (!t || !s) return null
+  for (let i = s.rounds.length - 1; i >= 0; i--) {
+    const winner = s.rounds[i]?.podium?.[0]
+    if (!winner) continue
+    const pts = s.rows.find((r) => r.name === winner)?.scores[i] ?? null
+    // „Král Petr“ -> „Petr Král“
+    const parts = winner.split(' ')
+    const name = parts.length > 1 ? `${parts.slice(1).join(' ')} ${parts[0]}` : winner
+    return { name, pts, date: s.rounds[i]!.date, title: t.title, slug: slugFromStem(t.stem as string) }
+  }
+  return null
+})
 const facts = [
   { k: 'Kde hrajeme', v: 'Bowling Club Holešov' },
   { k: 'Soutěže', v: 'Otevřené turnaje, 2. liga ČŠO' },
@@ -53,10 +76,15 @@ const link = 'text-[13px] text-accent-dark hover:underline'
           </div>
           <table class="w-full border-collapse text-[15px] tabular-nums">
             <tbody>
-              <tr v-for="(r, n) in league" :key="r.team" class="[&:not(:first-child)>td]:border-t [&>td]:border-line [&>td]:py-3.5">
-                <td class="w-7" :class="n === 0 ? 'text-accent' : 'text-ink-3'">{{ n + 1 }}.</td>
+              <tr
+                v-for="r in leaguePreview"
+                :key="r.team"
+                class="[&:not(:first-child)>td]:border-t [&>td]:border-line [&>td]:py-3.5"
+                :class="r.team === league?.us ? 'font-medium' : ''"
+              >
+                <td class="w-8" :class="r.team === league?.us || r.pos === 1 ? 'text-accent' : 'text-ink-3'">{{ r.pos }}.</td>
                 <td>{{ r.team }}</td>
-                <td class="text-right text-ink-3">{{ r.played }} zápasů</td>
+                <td class="text-right font-normal text-ink-3">{{ r.z }} zápasů</td>
                 <td class="w-14 text-right font-medium">{{ r.pts }} b.</td>
               </tr>
             </tbody>
@@ -64,8 +92,8 @@ const link = 'text-[13px] text-accent-dark hover:underline'
         </div>
 
         <NuxtLink
-          v-if="nextLeague"
-          :to="`/kalendar/${slugFromStem(nextLeague.stem as string)}`"
+          v-if="nextMatch"
+          to="/liga"
           class="flex min-w-0 flex-[1_1_280px] flex-col justify-between gap-6 rounded-[10px] bg-accent px-[22px] py-5 text-white transition-colors hover:bg-accent-dark"
         >
           <span class="text-[15px]">Další zápas ligy</span>
@@ -74,19 +102,22 @@ const link = 'text-[13px] text-accent-dark hover:underline'
               <br v-if="n">{{ t }}
             </template>
           </span>
-          <span class="text-sm text-white/90">{{ formatDate(nextLeague.date) }}, {{ nextLeague.time }}, doma</span>
+          <span class="text-sm text-white/90">{{ nextMatch.round }}. kolo · {{ formatDate(nextMatch.date) }}, {{ nextMatch.time }}, {{ nextMatch.home ? 'doma' : 'venku' }}</span>
         </NuxtLink>
 
         <NuxtLink
+          v-if="lastResult"
           to="/vysledky"
           :class="[box, 'flex min-w-0 flex-[1_1_260px] flex-col justify-between gap-6 transition-colors hover:bg-white']"
         >
           <span class="text-[15px]">Poslední výsledek</span>
           <span class="text-[26px] font-light leading-[1.15] tracking-tight2">
-            {{ podium[0].name }}
-            <span class="block text-sm tracking-normal text-ink-3">vítěz Vánočního turnaje, {{ podium[0].pts }} bodů</span>
+            {{ lastResult.name }}
+            <span class="block text-sm tracking-normal text-ink-3">
+              {{ lastResult.title }} · vítěz<template v-if="lastResult.pts != null">, {{ lastResult.pts }} bodů</template>
+            </span>
           </span>
-          <span class="text-sm text-ink-3">14. 12. 2026</span>
+          <span class="text-sm text-ink-3">{{ formatDate(lastResult.date) }}</span>
         </NuxtLink>
       </div>
 

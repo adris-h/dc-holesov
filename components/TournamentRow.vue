@@ -11,6 +11,7 @@ defineProps<{
   registered?: number
   status: string
   highlight?: boolean
+  advances?: number
 }>()
 </script>
 

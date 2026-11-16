@@ -15,13 +15,23 @@
 
         <div class="divide-y divide-line self-start border-y border-line">
           <div class="py-6">
-            <h3 class="text-lg font-medium tracking-tight">Pořadatel</h3>
-            <p class="mt-1 text-ink-3">info@dcholesov.cz</p>
+            <h3 class="text-lg font-medium tracking-tight">Pořadatel turnajů</h3>
+            <p class="mt-1 text-ink-3">Dalibor Sedlář</p>
+            <p class="text-ink-3">info@dcholesov.cz</p>
             <p class="text-ink-3">+420 000 000 000</p>
           </div>
           <div class="py-6">
+            <h3 class="text-lg font-medium tracking-tight">Předseda klubu</h3>
+            <p class="mt-1 text-ink-3">Radek Hanousek</p>
+          </div>
+          <div class="py-6">
+            <h3 class="text-lg font-medium tracking-tight">Herna</h3>
+            <p class="mt-1 text-ink-3">Bowling Club Holešov</p>
+            <p class="text-ink-3">Sušilova 339, 769 01 Holešov</p>
+          </div>
+          <div class="py-6">
             <h3 class="text-lg font-medium tracking-tight">Sítě</h3>
-            <a href="https://www.facebook.com/groups/285358988620699" target="_blank" class="mt-1 text-ink-3">Facebook skupina</a>
+            <a href="https://www.facebook.com/share/g/18xzrAyi8U/" target="_blank" rel="noopener" class="mt-1 text-accent-dark underline">Facebook skupina</a>
           </div>
         </div>
       </div>
