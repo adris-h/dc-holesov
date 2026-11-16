@@ -15,8 +15,8 @@ board:
   - { name: Jaromír Hlavizňa, role: Nástěnkář }
 sponsors:
   - { name: Krámek u mlsného kocůra, logo: /sponsors/kramek-u-mlsneho-kocura.png }
-  - { name: Bowling Holešov, logo: /sponsors/bowling-holesov.png }
-  - { name: Město Holešov, logo: /sponsors/mesto-holesov.png, url: "https://www.holesov.cz" }
+  - { name: Bowling Holešov, logo: /sponsors/bowling-holesov.webp }
+  - { name: Město Holešov, logo: /sponsors/mesto-holesov.svg, url: "https://www.holesov.cz" }
 ---
 
 ## Historie

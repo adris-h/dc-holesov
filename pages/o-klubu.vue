@@ -41,17 +41,17 @@ const { data: page } = await useAsyncData('page-o-klubu', () =>
       <p class="mb-6 max-w-2xl text-ink-2">
         Děkujeme všem našim partnerům za podporu holešovského šipkařského sportu.
       </p>
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <div class="flex flex-wrap items-center gap-x-14 gap-y-8">
         <component
-            :is="s.url ? 'a' : 'div'"
+            :is="s.url ? 'a' : 'span'"
             v-for="s in page.sponsors"
             :key="s.name"
             :href="s.url"
             :target="s.url ? '_blank' : undefined"
             :rel="s.url ? 'noopener' : undefined"
-            class="flex h-32 items-center justify-center rounded-[10px] border border-line bg-surface p-6 transition hover:border-line-strong"
+            class="block"
         >
-          <img :src="s.logo" :alt="s.name" :title="s.name" class="max-h-full max-w-full object-contain" loading="lazy">
+          <img :src="s.logo" :alt="s.name" :title="s.name" class="h-20 w-auto max-w-[240px] object-contain md:h-24" loading="lazy">
         </component>
       </div>
     </AppSection>
