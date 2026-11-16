@@ -27,7 +27,7 @@ const tabIdle = 'border-transparent hover:text-accent'
 </script>
 
 <template>
-  <Header class="fixed w-full z-20 bg-white/60 backdrop-blur-sm">
+  <header class="fixed w-full z-20 bg-white/60 backdrop-blur-sm">
     <div class="flex h-[63px] items-center justify-between px-5 md:px-8">
       <NuxtLink to="/" class=" font-medium tracking-[-0.01em]">DC Holešov</NuxtLink>
 
@@ -79,5 +79,5 @@ const tabIdle = 'border-transparent hover:text-accent'
         {{ account.label }}
       </NuxtLink>
     </nav>
-  </Header>
+  </header>
 </template>
